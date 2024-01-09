@@ -30,3 +30,5 @@ interface Crawler {
 }
 ```
 3. Separate API folders for next versions: v2, v3, etc
+4. Use shared in memory resources such as launched chrome instance between multiple task
+in order to reduce worker startup time and utilize resource more effectively
