@@ -13,10 +13,10 @@ export default {
         //  in the future it must be done via generic interface
         //  like Crawler[].forEach(c => c.run(args))
 
-        for (const k of keywords) {
-            tasks.push(pool.exec('google', [pages, k]))
-            tasks.push(pool.exec('bing', [pages, k]))
-            tasks.push(pool.exec('yahoo', [pages, k]))
+        for (const c of ['google', 'bing', 'yahoo']) {
+            for (const k of keywords) {
+                tasks.push(pool.exec('crawl', [c, pages, k]))
+            }
         }
 
         return Promise.all(tasks)

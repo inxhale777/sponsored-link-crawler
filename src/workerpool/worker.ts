@@ -1,5 +1,5 @@
 import workerpool from 'workerpool'
-import { Browser } from 'puppeteer';
+import {Browser, Page} from 'puppeteer';
 
 import GoogleCrawler from '../crawlers/google';
 import BingCrawler from '../crawlers/bing';
@@ -7,13 +7,32 @@ import YahooCrawler from '../crawlers/yahoo';
 
 import { launch } from '../puppeteer';
 
+interface AbstractCrawler {
+    run(page: Page, pages: number, keyword: string): Promise<string[]>
+}
+
 workerpool.worker({
-    'google': async (pages: number, keyword: string): Promise<string[]> => {
+    'crawl': async(crawlerName: string, pages: number, keyword: string) => {
+        let crawler: AbstractCrawler;
         let browser: Browser;
+
+        switch (crawlerName) {
+            case 'google':
+                crawler = new GoogleCrawler()
+                break
+            case 'yahoo':
+                crawler = new YahooCrawler()
+                break
+            case 'bing':
+                crawler = new BingCrawler()
+                break
+            default:
+                throw new Error(`invalid crawler name: ${crawlerName}`)
+        }
+
         try {
             browser = await launch(true)
             const page = await browser.newPage()
-            const crawler = new GoogleCrawler()
 
             return await crawler.run(page, pages, keyword)
         } catch (e) {
@@ -22,37 +41,5 @@ workerpool.worker({
             // @ts-ignore
             if (browser != null) await browser.close()
         }
-    },
-    'bing': async (pages: number, keyword: string): Promise<string[]> => {
-        let browser: Browser;
-        try {
-            browser = await launch(true)
-            const page = await browser.newPage()
-            const crawler = new BingCrawler()
-
-            return await crawler.run(page, pages, keyword)
-        } catch (e) {
-            throw e
-        } finally {
-            // @ts-ignore
-            if (browser != null) await browser.close()
-        }
-
-    },
-    'yahoo': async (pages: number, keyword: string): Promise<string[]> => {
-        let browser: Browser;
-        try {
-            browser = await launch(true)
-            const page = await browser.newPage()
-            const crawler = new YahooCrawler()
-
-            return await crawler.run(page, pages, keyword)
-        } catch (e) {
-            throw e
-        } finally {
-            // @ts-ignore
-            if (browser != null) await browser.close()
-        }
-
     }
 })
