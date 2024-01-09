@@ -13,13 +13,21 @@ process.on('uncaughtException', (e) => {
 const app = express()
 
 app.set('query parser', (query: string) => {
-    return qs.parse(query, {
+    const data = qs.parse(query, {
         comma: true
     })
+
+    // hack for single keyword in query
+    if (typeof data.keywords === 'string') {
+        data.keywords = [data.keywords]
+    }
+
+    return data
 })
 
 app.use('/api/v1/sponsored-links', sponsoredLinksHandler)
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     if (err instanceof MalformedPayload) {
         return res.status(400).json({

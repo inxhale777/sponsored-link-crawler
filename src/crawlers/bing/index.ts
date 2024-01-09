@@ -1,12 +1,15 @@
 import {Page} from 'puppeteer'
+import Logger from "../../core/logger";
 
 export default class BingCrawler {
-    async run(page: Page, pages: number, keywords: string[]): Promise<string[]> {
+    async run(page: Page, pages: number, keyword: string): Promise<string[]> {
         let redirects: string[] = [];
 
         for (let i = 0; i < pages; i++) {
+            Logger.info(`BingCrawler: search for ${keyword}, page: ${i}`)
+
             // iterate over 1-10, 11-21, 21-30
-            const url = `https://bing.com/search?q=${encodeURIComponent(keywords.join(' '))}&first=${i*10}`;
+            const url = `https://bing.com/search?q=${encodeURIComponent(keyword)}&first=${i*10}`;
             await page.goto(url, {
                 waitUntil: 'load'
             })

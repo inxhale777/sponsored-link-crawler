@@ -1,20 +1,21 @@
 import workerpool from 'workerpool'
-import {Browser} from "puppeteer";
+import { Browser } from 'puppeteer';
 
-import GoogleCrawler from "../crawlers/google";
-import BingCrawler from "../crawlers/bing";
-import {launch} from '../puppeteer';
-import YahooCrawler from "../crawlers/yahoo";
+import GoogleCrawler from '../crawlers/google';
+import BingCrawler from '../crawlers/bing';
+import YahooCrawler from '../crawlers/yahoo';
+
+import { launch } from '../puppeteer';
 
 workerpool.worker({
-    'google': async (pages: number, keywords: string[]): Promise<string[]> => {
+    'google': async (pages: number, keyword: string): Promise<string[]> => {
         let browser: Browser;
         try {
             browser = await launch(true)
             const page = await browser.newPage()
             const crawler = new GoogleCrawler()
 
-            return await crawler.run(page, pages, keywords)
+            return await crawler.run(page, pages, keyword)
         } catch (e) {
             throw e
         } finally {
@@ -22,14 +23,14 @@ workerpool.worker({
             if (browser != null) await browser.close()
         }
     },
-    'bing': async (pages: number, keywords: string[]): Promise<string[]> => {
+    'bing': async (pages: number, keyword: string): Promise<string[]> => {
         let browser: Browser;
         try {
             browser = await launch(true)
             const page = await browser.newPage()
             const crawler = new BingCrawler()
 
-            return await crawler.run(page, pages, keywords)
+            return await crawler.run(page, pages, keyword)
         } catch (e) {
             throw e
         } finally {
@@ -38,14 +39,14 @@ workerpool.worker({
         }
 
     },
-    'yahoo': async (pages: number, keywords: string[]): Promise<string[]> => {
+    'yahoo': async (pages: number, keyword: string): Promise<string[]> => {
         let browser: Browser;
         try {
             browser = await launch(true)
             const page = await browser.newPage()
             const crawler = new YahooCrawler()
 
-            return await crawler.run(page, pages, keywords)
+            return await crawler.run(page, pages, keyword)
         } catch (e) {
             throw e
         } finally {

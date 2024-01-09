@@ -1,7 +1,9 @@
 import { Page } from "puppeteer";
 
+import Logger from '../../core/logger'
+
 export default class YahooCrawler {
-    async run(page: Page, pages: number, keywords: string[]): Promise<string[]> {
+    async run(page: Page, pages: number, keyword: string): Promise<string[]> {
         let result: string[] = [];
 
         // accept cookies first
@@ -11,6 +13,8 @@ export default class YahooCrawler {
 
         if (page.url().includes("consent")) {
             // looks like we got redirected to https://consent.yahoo.com/
+            Logger.info("YahooCrawler: cookie consent page, accepting all")
+
             await page.waitForSelector('form.consent-form')
             await page.click('form.consent-form button.accept-all')
             await page.waitForNetworkIdle({
@@ -19,7 +23,9 @@ export default class YahooCrawler {
         }
 
         for (let i = 0; i < pages; i++) {
-            const url = `https://search.yahoo.com/search;?p=${encodeURIComponent(keywords.join(' '))}&b=${i*10}`;
+            Logger.info(`YahooCrawler: search for ${keyword}, page: ${i}`)
+
+            const url = `https://search.yahoo.com/search;?p=${encodeURIComponent(keyword)}&b=${i*10}`;
             await page.goto(url, {
                 waitUntil: 'load'
             })

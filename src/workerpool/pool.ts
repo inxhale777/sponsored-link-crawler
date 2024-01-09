@@ -6,14 +6,14 @@ const pool = workerpool.pool(`${__dirname}/worker.js`, {
 
 export default {
     run: async function (pages: number, keywords: string[]): Promise<string[]> {
-        return Promise.all([
-            // TODO: unable to serialize crawler.run function or share memory with worker,
-            //  so just hardcode our crawlers here
-            //  In the future it must be done via passing Crawler interface down to worker
+        const tasks = [];
 
-            pool.exec('google', [pages, keywords],),
-            pool.exec('bing', [pages, keywords]),
-            pool.exec('yahoo', [pages, keywords]),
-        ])
+        for (const k of keywords) {
+            tasks.push(pool.exec('google', [pages, k]))
+            tasks.push(pool.exec('bing', [pages, k]))
+            tasks.push(pool.exec('yahoo', [pages, k]))
+        }
+
+        return Promise.all(tasks)
     }
 }

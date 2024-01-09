@@ -7,13 +7,13 @@ import pool from "../../../workerpool/pool";
 
 const router = express.Router();
 
-interface sponsoredLinksRequest extends ParsedQs {
+interface QueryRequest extends ParsedQs {
     keywords: string[];
     pages: string;
 }
 
 export default router.get('/', validator(schema, ValidationSource.QUERY),
-    async (req: Request<{}, {}, {}, sponsoredLinksRequest>, res: Response, next: NextFunction) => {
+    async (req: Request<any, any, any, QueryRequest>, res: Response, next: NextFunction) => {
         const keywords = req.query.keywords
         const pages = Number(req.query.pages)
 

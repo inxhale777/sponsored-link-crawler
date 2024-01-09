@@ -1,6 +1,7 @@
 import puppeteer from 'puppeteer-extra';
-import {Browser, Page} from "puppeteer";
 import stealth from "puppeteer-extra-plugin-stealth";
+
+import { Browser } from "puppeteer";
 
 puppeteer.use(stealth())
 

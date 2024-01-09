@@ -1,14 +1,15 @@
 import {Page} from 'puppeteer'
+import Logger from "../../core/logger";
 
 export default class GoogleCrawler {
-    async run(page: Page, pages: number, keywords: string[]): Promise<string[]> {
-        // build query string like: ("KEYWORD") AND ("KEYWORD") AND ("ANOTHER KEYWORD")
-        const query = encodeURIComponent(keywords.map(k => `("${k}")`).join(' AND '))
+    async run(page: Page, pages: number, keyword: string): Promise<string[]> {
         let result: string[] = []
 
         for (let i = 0; i < pages; i++) {
+            Logger.info(`GoogleCrawler: search for ${keyword}, page: ${i}`)
+
             // multiple page number by 10 for proper iterating over results
-            await page.goto(`https://google.com/search?q=${query}&start=${i * 10}`, {
+            await page.goto(`https://google.com/search?q=${encodeURIComponent(keyword)}&start=${i * 10}`, {
                 waitUntil: "load",
             })
 
