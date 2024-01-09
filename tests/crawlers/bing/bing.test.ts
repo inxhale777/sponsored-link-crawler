@@ -1,12 +1,9 @@
-import puppeteer from 'puppeteer-extra';
-import stealth from 'puppeteer-extra-plugin-stealth'
 import {Browser, Page} from 'puppeteer';
 import {describe, expect} from '@jest/globals'
 
 import BingCrawler from "../../../src/crawlers/bing";
 import Logger from '../../../src/core/logger'
-
-puppeteer.use(stealth())
+import { launch } from '../../../src/puppeteer'
 
 const timeout = 120 * 1000
 describe('bing crawler test',  () => {
@@ -14,9 +11,7 @@ describe('bing crawler test',  () => {
     let page: Page
 
     beforeAll(async () => {
-        browser = await puppeteer.launch({
-            headless: 'new',
-        });
+        browser = await launch(false)
 
         page = await browser.newPage()
     })
@@ -31,7 +26,7 @@ describe('bing crawler test',  () => {
 
     it('should return ads links', async () => {
         const crawler = new BingCrawler()
-        const result = await crawler.run(page, 5, ['most', 'popular', 'advertising', 'platform'])
+        const result = await crawler.run(page, 5, 'ads marketing platform')
 
         Logger.info(`bing crawler returned links`, [result.join(', ')])
 

@@ -14,7 +14,7 @@ interface AbstractCrawler {
 workerpool.worker({
     'crawl': async(crawlerName: string, pages: number, keyword: string) => {
         let crawler: AbstractCrawler;
-        let browser: Browser;
+        let browser: Browser | null = null;
 
         switch (crawlerName) {
             case 'google':
@@ -38,7 +38,6 @@ workerpool.worker({
         } catch (e) {
             throw e
         } finally {
-            // @ts-ignore
             if (browser != null) await browser.close()
         }
     }
