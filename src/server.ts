@@ -4,10 +4,10 @@ import qs from 'qs'
 import Logger from './core/logger';
 import sponsoredLinksHandler from './api/handlers/sponsoredLinks'
 import { MalformedPayload } from "./core/error";
+import { port } from './config';
 
 process.on('uncaughtException', (e) => {
     Logger.error(e)
-    console.log(e)
 });
 
 const app = express()
@@ -41,8 +41,8 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     })
 })
 
-app.listen(3000, () => {
-    Logger.info('server stared on port 3000')
+app.listen(port, () => {
+    Logger.info(`server stared on port ${port}`)
 })
 .on('error', err => {
     Logger.error(err)
