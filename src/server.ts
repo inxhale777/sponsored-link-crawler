@@ -1,49 +1,49 @@
 import express, { Request, Response, NextFunction } from 'express';
-import qs from 'qs'
+import qs from 'qs';
 
 import Logger from './core/logger';
-import sponsoredLinksHandler from './api/handlers/sponsoredLinks'
-import { MalformedPayload } from "./core/error";
+import sponsoredLinksHandler from './api/handlers/sponsoredLinks';
+import { MalformedPayload } from './core/error';
 import { port } from './config';
 
 process.on('uncaughtException', (e) => {
-    Logger.error(e)
+  Logger.error(e);
 });
 
-const app = express()
+const app = express();
 
 app.set('query parser', (query: string) => {
-    const data = qs.parse(query, {
-        comma: true
-    })
+  const data = qs.parse(query, {
+    comma: true,
+  });
 
-    // hack for single keyword in query
-    if (typeof data.keywords === 'string') {
-        data.keywords = [data.keywords]
-    }
+  // hack for single keyword in query
+  if (typeof data.keywords === 'string') {
+    data.keywords = [data.keywords];
+  }
 
-    return data
-})
+  return data;
+});
 
-app.use('/api/v1/sponsored-links', sponsoredLinksHandler)
+app.use('/api/v1/sponsored-links', sponsoredLinksHandler);
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-    if (err instanceof MalformedPayload) {
-        return res.status(400).json({
-            error: 'malformed_payload',
-            details: err.message
-        })
-    }
+  if (err instanceof MalformedPayload) {
+    return res.status(400).json({
+      error: 'malformed_payload',
+      details: err.message,
+    });
+  }
 
-    return res.status(500).json({
-        error: err.message,
-    })
-})
+  return res.status(500).json({
+    error: err.message,
+  });
+});
 
 app.listen(port, () => {
-    Logger.info(`server stared on port ${port}`)
+  Logger.info(`server stared on port ${port}`);
 })
-.on('error', err => {
-    Logger.error(err)
-})
+  .on('error', err => {
+    Logger.error(err);
+  });

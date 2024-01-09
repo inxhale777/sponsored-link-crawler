@@ -6,6 +6,7 @@ import Logger from '../../../src/core/logger'
 import { launch } from '../../../src/puppeteer'
 
 const timeout = 120 * 1000
+
 describe('bing crawler test',  () => {
     let browser: Browser;
     let page: Page
